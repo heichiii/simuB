@@ -5,7 +5,7 @@ a0=0;
 alpha=[ pi/2 0 -pi/2 pi/2 -pi/2];
 a=[  0 0.345 0 0 0];
 d=[0 0 -0.09 0.295 0 0];
-test=[0.6*pi pi*0.4 -pi*0.55 pi/2 -0.2*pi 0];
+test=[1*pi 0.01*pi -1.49*pi -0.99*pi -0.39*pi 0];
 L(1) = Link('alpha', alpha0,         'a', a0,    'd', d(1),  'modified');
 L(1).qlim=[-pi,pi];
 L(2) = Link('alpha', alpha(1),      'a', a(1), 'd', d(2),  'modified');
@@ -15,7 +15,7 @@ L(3).qlim=[-1.5*pi,-0.5*pi];
 L(4) = Link('alpha', alpha(3),     'a', a(3),    'd', d(4),  'modified');
 L(4).qlim=[-pi,pi];
 L(5) = Link('alpha',alpha(4),      'a', a(4),    'd', d(5),  'modified');
-L(5).qlim=[-pi,pi];
+L(5).qlim=[-0.6*pi,0.6*pi];
 L(6) = Link('alpha', alpha(5),     'a', a(5),    'd', d(6),  'modified');
 L(6).qlim = [-2*pi,2*pi];
 robot0 = SerialLink(L,'name','engineer');
@@ -130,8 +130,8 @@ b=2*(d4*sa3*s3+a2);
 c=d3*ca2*ca1+d2*ca1-(d4*sa3*ca2*c3)-z_in;
 u1=(-b+sqrt(b^2-4*aa*c))/(2*aa);
 u2=(-b-sqrt(b^2-4*aa*c))/(2*aa);
-theta2_1=atan(u1)*2;
-theta2_2=atan(u2)*2;
+theta2_1=atan(u1)*2
+theta2_2=atan(u2)*2
 if theta2_1>pi/2 || theta2_1<0
     theta2=theta2_2;
 else
@@ -192,7 +192,10 @@ c1*s4 + c4*(c2*c3*s1 - s1*s2*s3),   c1*c4 - s4*(c2*c3*s1 - s1*s2*s3), -s1*(c2*s3
               c4*(c2*s3 + c3*s2),                -s4*(c2*s3 + c3*s2),       c2*c3 - s2*s3];
 
 R406=R04'*R06;
-theta5=atan(sqrt(R406(1,3)^2+R406(2,3)^2)/R406(3,3));
+theta5_1=atan2(sqrt(R406(1,3)^2+R406(2,3)^2),R406(3,3))
+theta5_2=atan2(-sqrt(R406(1,3)^2+R406(2,3)^2),R406(3,3))
+%theta5=atan(sqrt(R406(1,3)^2+R406(2,3)^2)/R406(3,3));
+theta5=theta5_2;
 % if R406(3,3)<0
 %     theta5=-theta5;
 % end
@@ -210,4 +213,4 @@ end
 
 test
 theta=[theta1 theta2 theta3 theta4 theta5 theta6]
-% robot0.teach(theta);
+robot0.teach(theta);
