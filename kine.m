@@ -4,22 +4,26 @@ alpha0=0;
 a0=0;
 alpha=[ pi/2 0 -pi/2 pi/2 -pi/2];
 a=[  0 0.345 0 0 0];
-d=[0 0 -0.09 0.295 0 0];
-test=[1*pi 0.01*pi -1.49*pi -0.99*pi -0.39*pi 0];
+d=[0 0 0.09 0.295 0 0];
+% test=[-0.25*pi 0.49*pi -1.1*pi 0.9*pi 0.2*pi 0];
+test=[-3.11, 1.87, -1.60 0 0 0];
 L(1) = Link('alpha', alpha0,         'a', a0,    'd', d(1),  'modified');
 L(1).qlim=[-pi,pi];
 L(2) = Link('alpha', alpha(1),      'a', a(1), 'd', d(2),  'modified');
-L(2).qlim=[0,pi];
+L(2).qlim=[15/180*pi,140/180*pi];
 L(3) = Link('alpha', alpha(2),         'a', a(2),'d', d(3),  'modified');
-L(3).qlim=[-1.5*pi,-0.5*pi];
+% L(3).qlim=[-250/180*pi,-45/180*pi];%-1.38  --  -0.25
+L(3).qlim=[-250/180*pi,-0.5*pi];%-1.38  --  -0.25
 L(4) = Link('alpha', alpha(3),     'a', a(3),    'd', d(4),  'modified');
 L(4).qlim=[-pi,pi];
 L(5) = Link('alpha',alpha(4),      'a', a(4),    'd', d(5),  'modified');
-L(5).qlim=[-0.6*pi,0.6*pi];
+L(5).qlim=[-100/180*pi,80/180*pi];
 L(6) = Link('alpha', alpha(5),     'a', a(5),    'd', d(6),  'modified');
 L(6).qlim = [-2*pi,2*pi];
 robot0 = SerialLink(L,'name','engineer');
-robot0.teach(test);
+
+robot1 = SerialLink(L,'name','engineer2');
+% robot0.teach(test);
 % 符号量
 ca0=cos(alpha0);
 sa0=sin(alpha0);
@@ -49,6 +53,10 @@ p=robot0.fkine(test);
 x_in = p.t(1);
 y_in = p.t(2);
 z_in = p.t(3);
+
+
+
+
 r_in=x_in^2+y_in^2+z_in^2;
 r11 = p.n(1);
 r21 = p.n(2);
@@ -60,50 +68,13 @@ r13 = p.a(1);
 r23 = p.a(2);
 r33 = p.a(3);
 R06=[r11 r12 r13;r21 r22 r23;r31 r32 r33];
+yaw_in=atan2(-r12,r11);
+pitch_in=atan2(r13,r11/cos(yaw_in));
+roll_in=atan2(-r23,r33);
 
 
 % % theta3
 f3=d3*ca2;
-% aa=(f3^2+a1^2+d2^2+2*d2*f3+d4^2+a2^2-r_in)
-% b=2*2*a2*d4*sa3
-% c=(f3^2+a1^2+d2^2+2*d2*f3+d4^2+a2^2-r_in)
-
-% 
-% aa=0
-% b=2*a2*d4*sa3
-% c=f3^2+a1^2+d2^2+2*d2*f3+d4^2+a2^2-r_in
-% 
-% tttttt=0;
-% aa=(r_in-d4^2-a2^2-2*a2*d4*sa3-f3^2-a1^2-d2^2-2*d2*f3)/(2*a2*d4*sa3);
-% tmp=1-aa^2
-% if abs(tmp)<0.000001
-%     tmp=0;
-% end
-% aa=(r_in-d4^2-a2^2-f3^2-a1^2-d2^2-2*d2*f3)
-
-
-
-% theta3_1=atan(u1)*2-pi;
-% theta3_2=atan(u2)*2-pi;
-% if theta3_1> -0.5*pi || theta3_1< -1.5*pi
-%     theta3=theta3_2;
-% else
-%     theta3=theta3_1;
-% end
-
-
-% theta3
-% theta3_1=asin((r_in-0.127125)/0.20355)
-% theta3_1=asin((0.21415-r_in)/0.20355)
-% theta3=theta3_1;
-
-%%%%%%%% theta3
-% % sin(theta)=a
-% aa=(0.21415-r_in)/0.20355
-% tmp=1-aa^2
-% theta3_1=atan2(sqrt(tmp),aa)
-% theta3_2=atan2(-sqrt(tmp),aa)
-
 % a*cos(theta)+b*sin(theta)=c
 aa=0;
 b=0.20355;
@@ -118,6 +89,7 @@ theta3_2=atan2(b,aa)-atan2(sqrt(aa^2+b^2-c^2),c);
 theta3=theta3_1-2*pi;
 
 
+
 % theta2
 s3=sin(theta3);
 c3=cos(theta3);
@@ -130,13 +102,23 @@ b=2*(d4*sa3*s3+a2);
 c=d3*ca2*ca1+d2*ca1-(d4*sa3*ca2*c3)-z_in;
 u1=(-b+sqrt(b^2-4*aa*c))/(2*aa);
 u2=(-b-sqrt(b^2-4*aa*c))/(2*aa);
-theta2_1=atan(u1)*2
-theta2_2=atan(u2)*2
-if theta2_1>pi/2 || theta2_1<0
-    theta2=theta2_2;
+theta2_1=atan(u1)*2;
+theta2_2=atan(u2)*2;
+flag=1;
+if theta2_1<L(2).qlim(1)-0.1 || theta2_1>L(2).qlim(2)+0.1
+    theta2=theta2_2;flag=0;
+
+elseif theta2_2<L(2).qlim(1)-0.1 || theta2_2>L(2).qlim(2)+0.1 
+        theta2=theta2_1;flag=0;
 else
-theta2=theta2_1;
+    theta2=theta2_1;
 end
+
+% if theta2_1>pi/2 || theta2_1<0
+%     theta2=theta2_2;
+% else
+% theta2=theta2_1;
+% end
 
 
 % theta1
@@ -164,7 +146,70 @@ aa=g1;
 b=g2;
 c=x_in;
 d=y_in;
-theta1=atan2(aa*d-b*c,aa*c+b*d);
+theta1_1=atan2(aa*d-b*c,aa*c+b*d);
+% if (x_in<=0 && abs(theta1_1)>0.5*pi)
+%     theta1=theta1_1;
+% 
+theta1=theta1_1;
+if flag
+if (y_in>=0)
+    if((((x_in>=0.09) && (abs(theta1_1)<=0.5*pi)) || (x_in<0.09 && (abs(theta1_1)>0.5*pi) && (abs(theta1_1)<=pi))))
+        theta1=theta1_1;
+    else
+        theta2=theta2_2;
+        s2=sin(theta2);
+        c2=cos(theta2);
+        f1=d4*sa3*s3+a2;
+        f2=-d4*sa3*ca2*c3;
+        g1=c2*f1-s2*f2+a1;
+        g2=s2*ca1*f1+c2*ca1*f2-sa1*f3-d2*sa1;
+        aa=g1;
+        b=g2;
+        c=x_in;
+        d=y_in;
+        theta1_2=atan2(aa*d-b*c,aa*c+b*d);
+        theta1=theta1_2;
+    end
+else
+    if((x_in>=-0.09) && (theta1_1>=-0.51*pi)) || (x_in<-0.09 && (theta1_1<-0.5*pi) && (theta1_1>=-pi))
+        theta1=theta1_1;
+    else
+        theta2=theta2_2;
+        s2=sin(theta2);
+        c2=cos(theta2);
+        f1=d4*sa3*s3+a2;
+        f2=-d4*sa3*ca2*c3;
+        g1=c2*f1-s2*f2+a1;
+        g2=s2*ca1*f1+c2*ca1*f2-sa1*f3-d2*sa1;
+        aa=g1;
+        b=g2;
+        c=x_in;
+        d=y_in;
+        theta1_2=atan2(aa*d-b*c,aa*c+b*d);
+        theta1=theta1_2;
+    end
+end
+
+end
+
+% if (((x_in>=0) && (abs(theta1_1)<=0.5*pi)) || (x_in<0 && (abs(theta1_1)>0.5*pi) && (abs(theta1_1)<pi)))
+%     theta1=theta1_1;
+% else
+%     theta2=theta2_2;
+%     s2=sin(theta2);
+%     c2=cos(theta2);
+%     f1=d4*sa3*s3+a2;
+%     f2=-d4*sa3*ca2*c3;
+%     g1=c2*f1-s2*f2+a1;
+%     g2=s2*ca1*f1+c2*ca1*f2-sa1*f3-d2*sa1;
+%     aa=g1;
+%     b=g2;
+%     c=x_in;
+%     d=y_in;
+%     theta1_2=atan2(aa*d-b*c,aa*c+b*d);
+%     theta1=theta1_2;
+% end
+
 
 
 
@@ -192,25 +237,30 @@ c1*s4 + c4*(c2*c3*s1 - s1*s2*s3),   c1*c4 - s4*(c2*c3*s1 - s1*s2*s3), -s1*(c2*s3
               c4*(c2*s3 + c3*s2),                -s4*(c2*s3 + c3*s2),       c2*c3 - s2*s3];
 
 R406=R04'*R06;
-theta5_1=atan2(sqrt(R406(1,3)^2+R406(2,3)^2),R406(3,3))
-theta5_2=atan2(-sqrt(R406(1,3)^2+R406(2,3)^2),R406(3,3))
+theta5_1=atan2(sqrt(R406(1,3)^2+R406(2,3)^2),R406(3,3));
+theta5_2=atan2(-sqrt(R406(1,3)^2+R406(2,3)^2),R406(3,3));
 %theta5=atan(sqrt(R406(1,3)^2+R406(2,3)^2)/R406(3,3));
-theta5=theta5_2;
-% if R406(3,3)<0
-%     theta5=-theta5;
-% end
-% if R406(3,3)<0
-%     theta5=pi-theta5;
-% end
+% theta5=theta5_2;
+
+% if pitch_in>0 && theta5_1<pi/3
+if pitch_in>0 && theta5_1<(80/180*pi)
+    theta5=theta5_1;
+else
+    theta5=theta5_2;
+end
+
 if abs(theta5)>0.00001
-    theta4=atan(R406(2,3)/R406(1,3));
-    theta6=atan(R406(3,2)/-R406(3,1));
+    theta4=atan2(-(R406(2,3)/sin(theta5)),-(R406(1,3)/sin(theta5)));
+    theta6=atan2(-(R406(3,2)/sin(theta5)),-(-R406(3,1)/sin(theta5)));
 else
     theta4=0;
     theta6=0;
 end
 
-
-test
-theta=[theta1 theta2 theta3 theta4 theta5 theta6]
+test;
+test_deg=test/pi*180
+theta=[theta1 theta2 theta3 theta4 theta5 theta6];
+theta_deg=theta/pi*180
 robot0.teach(theta);
+figure;
+robot1.teach(test);
