@@ -6,7 +6,7 @@ alpha=[ pi/2 0 -pi/2 pi/2 -pi/2];
 a=[  0 0.345 0 0 0];
 d=[0 0 0.09 0.295 0 0];
 % test=[-0.25*pi 0.49*pi -1.1*pi 0.9*pi 0.2*pi 0];
-test=[-3.11, 1.87, -1.60 0 0 0];
+test=[0.16, 2, -pi 0.25*pi 0.25*pi 0];
 L(1) = Link('alpha', alpha0,         'a', a0,    'd', d(1),  'modified');
 L(1).qlim=[-pi,pi];
 L(2) = Link('alpha', alpha(1),      'a', a(1), 'd', d(2),  'modified');
@@ -17,7 +17,8 @@ L(3).qlim=[-250/180*pi,-0.5*pi];%-1.38  --  -0.25
 L(4) = Link('alpha', alpha(3),     'a', a(3),    'd', d(4),  'modified');
 L(4).qlim=[-pi,pi];
 L(5) = Link('alpha',alpha(4),      'a', a(4),    'd', d(5),  'modified');
-L(5).qlim=[-100/180*pi,80/180*pi];
+% L(5).qlim=[-100/180*pi,80/180*pi];
+L(5).qlim=[-0.5*pi,0.5*pi];
 L(6) = Link('alpha', alpha(5),     'a', a(5),    'd', d(6),  'modified');
 L(6).qlim = [-2*pi,2*pi];
 robot0 = SerialLink(L,'name','engineer');
@@ -262,5 +263,7 @@ test_deg=test/pi*180
 theta=[theta1 theta2 theta3 theta4 theta5 theta6];
 theta_deg=theta/pi*180
 robot0.teach(theta);
+title('theta');
 figure;
 robot1.teach(test);
+title('test');

@@ -236,7 +236,7 @@ fprintf('Mismatched points: %d (%.2f%%)\n', mismatch_count, 100*mismatch_count/t
 % end
 figure;
 scatter3(points(:,1), points(:,2), points(:,3), 5, 'filled', 'MarkerFaceAlpha', 0.3);
-title('机械臂工作空间（蒙特卡洛采样）');
+title('突变点');
 xlabel('X (m)'); ylabel('Y (m)'); zlabel('Z (m)');
 grid on;
 axis equal;
