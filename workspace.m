@@ -28,7 +28,7 @@ robot0.plot(test);
 title('机械臂初始配置');
 
 %% 蒙特卡洛法计算机械臂工作空间
-numSamples = 10000; % 采样点数
+numSamples = 30000; % 采样点数
 points = zeros(numSamples, 3); % 存储末端位置
 
 % 遍历所有关节，随机采样
@@ -50,7 +50,20 @@ end
 % 可视化工作空间
 figure(2);
 scatter3(points(:,1), points(:,2), points(:,3), 5, 'filled', 'MarkerFaceAlpha', 0.3);
-title('机械臂工作空间（蒙特卡洛采样）');
+% title('机械臂工作空间（蒙特卡洛采样）');
+% xlabel('X (m)'); ylabel('Y (m)'); zlabel('Z (m)');
+% grid on;
+% axis equal;
+hold on;
+
+% 提取点云边界
+shrinkFactor = 0.5; % 收缩因子，调整边界紧密度（0~1，越小边界越紧）
+k = boundary(points, shrinkFactor);
+
+% 绘制边界
+trisurf(k, points(:,1), points(:,2), points(:,3), 'FaceColor', 'red', 'FaceAlpha', 0.1, 'EdgeColor', 'none');
+title('机械臂工作空间（蒙特卡洛采样及边界）');
 xlabel('X (m)'); ylabel('Y (m)'); zlabel('Z (m)');
 grid on;
 axis equal;
+hold off;

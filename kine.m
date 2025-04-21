@@ -6,7 +6,8 @@ alpha=[ pi/2 0 -pi/2 pi/2 -pi/2];
 a=[  0 0.345 0 0 0];
 d=[0 0 0.09 0.295 0 0];
 % test=[-0.25*pi 0.49*pi -1.1*pi 0.9*pi 0.2*pi 0];
-test=[0.16, 2, -pi 0.25*pi 0.25*pi 0];
+% test=[0.16, 2, -pi 0.25*pi 0.25*pi 0];
+test=[0 0.5*pi -pi,0,0,0];
 L(1) = Link('alpha', alpha0,         'a', a0,    'd', d(1),  'modified');
 L(1).qlim=[-pi,pi];
 L(2) = Link('alpha', alpha(1),      'a', a(1), 'd', d(2),  'modified');
@@ -262,7 +263,7 @@ test;
 test_deg=test/pi*180
 theta=[theta1 theta2 theta3 theta4 theta5 theta6];
 theta_deg=theta/pi*180
-robot0.teach(theta);
+robot0.teach();
 title('theta');
 figure;
 robot1.teach(test);
