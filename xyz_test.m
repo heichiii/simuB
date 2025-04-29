@@ -7,7 +7,7 @@ alpha = [pi/2 0 -pi/2 pi/2 -pi/2];
 a = [0 0.345 0 0 0];
 d = [0 0 0.09 0.295 0 0];
 
-numSamples = 10000; % 采样点数
+numSamples = 50000; % 采样点数
 points = zeros(numSamples, 3); % 存储末端位置
 % 创建机械臂模型
 L(1) = Link('alpha', alpha0, 'a', a0, 'd', d(1), 'modified'); L(1).qlim = [-0.99*pi, 0.99*pi];
@@ -27,10 +27,10 @@ a1 = a(1); a2 = a(2);
 d1 = d(1); d2 = d(2); d3 = d(3); d4 = d(4);
 
 % 工作空间采样参数
-sample_num = 50; % 每个维度采样点数
-x_in_range = linspace(-0.5, 0.5, sample_num);
-y_in_range = linspace(-0.5, 0.5, sample_num);
-z_in_range = linspace(0, 0.8, sample_num);
+sample_num = 100; % 每个维度采样点数
+x_in_range = linspace(-0.7, 0.7, sample_num);
+y_in_range = linspace(-0.7, 0.7, sample_num);
+z_in_range = linspace(-0.2, 0.7, sample_num);
 
 % 初始化计数器
 mismatch_count = 0;
@@ -41,12 +41,12 @@ last_angle=[0 0 0];
 % for z_in = z_in_range
 %     for y_in = y_in_range
 %         for x_in = x_in_range
-for x_in = x_in_range
-    for z_in = z_in_range
-        for y_in = y_in_range
 % for x_in = x_in_range
-%     for y_in = y_in_range
-%         for z_in = z_in_range
+%     for z_in = z_in_range
+%         for y_in = y_in_range
+for x_in = x_in_range
+    for y_in = y_in_range
+        for z_in = z_in_range
             % 跳过不可达的圆柱空间 (x_in^2 + y_in^2 = 0.081)
             if (x_in^2 + y_in^2) <= 0.081 + 1e-6
                 continue;

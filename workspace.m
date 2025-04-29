@@ -64,6 +64,10 @@ k = boundary(points, shrinkFactor);
 trisurf(k, points(:,1), points(:,2), points(:,3), 'FaceColor', 'red', 'FaceAlpha', 0.1, 'EdgeColor', 'none');
 title('机械臂工作空间（蒙特卡洛采样及边界）');
 xlabel('X (m)'); ylabel('Y (m)'); zlabel('Z (m)');
+% 在 figure(2) 的绘图代码后添加：
+daspect([1 1 1]);  % X:Y:Z = 1:1:1
+axis tight;        % 紧贴数据范围
+
 grid on;
 axis equal;
 hold off;
